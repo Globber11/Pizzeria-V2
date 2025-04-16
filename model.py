@@ -1,3 +1,4 @@
+
 class Pizza:
     def __init__(self, price: int, ingredients: dict[str, int], name: str):
         self.__name = name
