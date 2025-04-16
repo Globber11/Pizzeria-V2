@@ -1,5 +1,7 @@
 from random import *
 import json
+from typing import Dict
+from abc import ABC, abstractmethod
 
 class Registrator:
     def crate_account(self, name, surname, phone_number, born_date):
@@ -35,32 +37,90 @@ class Registrator:
 
         save_users(users)
 
-class Pizza:
-    def __init__(self, price: int, ingredients: dict[str, int], name: str):
-        self.__name = name
-        self.__ingredients = ingredients
-        self.__price = price
+class Pizza(ABC):
+    @abstractmethod
+    def __init__(self, name: str, ingredients: Dict[str, int], base_price: int):
+        self._name = name
+        self._ingredients = ingredients
+        self._base_price = base_price
 
     @property
-    def get_price(self):
-        return self.__price
+    def name(self) -> str:
+        return self._name
 
-    @get_price.setter
-    def set_price(self):
-        self.__price = price
-        return self
+    @property
+    def ingredients(self) -> Dict[str, int]:
+        return self._ingredients
+
+    @property
+    def price(self) -> int:
+        return self._base_price
+
+    @price.setter
+    def price(self, value: int):
+        if value >= 0:
+            self._base_price = value
+        else:
+            raise ValueError("Price cannot be negative")
+
+    def __str__(self):
+        return f"{self._name} (Цена: {self._base_price}, Ингредиенты: {self._ingredients})"
+
 
 class Margarita(Pizza):
-    pass
+    def __init__(self):
+        super().__init__(
+            name="Margarita",
+            ingredients={"cheese": 100, "tomatoes": 200, "sauce": 50, "dough": 300},
+            base_price=450
+        )
+
 
 class Pepperoni(Pizza):
-    pass
+    def __init__(self):
+        super().__init__(
+            name="Pepperoni",
+            ingredients={"cheese": 150, "sauce": 50, "sausage": 70, "dough": 300},
+            base_price=550
+        )
+
 
 class FourCheeses(Pizza):
-    pass
+    def __init__(self):
+        super().__init__(
+            name="Four Cheeses",
+            ingredients={"cheese": 300, "sauce": 50, "dough": 300},
+            base_price=600
+        )
+
 
 class HamCheese(Pizza):
-    pass
+    def __init__(self):
+        super().__init__(
+            name="Ham and Cheese",
+            ingredients={"cheese": 150, "ham": 70, "sauce": 50, "dough": 300},
+            base_price=500
+        )
+
 
 class Hawaiian(Pizza):
-    pass
+    def __init__(self):
+        super().__init__(
+            name="Hawaiian",
+            ingredients={"chicken": 100, "pineapple": 70, "cheese": 100, "sauce": 50, "dough": 250},
+            base_price=550
+        )
+
+class Basket:
+    def __init__(self, basket: Dict[str, int]):
+        self.__basket = basket
+
+    def add_to_basket(self, product, quantity):
+        if product in self.__basket.keys():
+            self.__basket[product] += quantity
+        else:
+            self.__basket[product] = quantity
+            
+    @property
+    def basket(self):
+        return self.__basket
