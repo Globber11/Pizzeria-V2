@@ -125,61 +125,42 @@ class Busket:
         return self.__busket
 
 class Warehouse:
-    def subtract_products(self, product, quantity):
-        def load():
-            try:
-                with open('products.json', 'r', encoding='utf-8') as file:
-                    content = file.read()
-                    if content.strip():
-                        return json.loads(content)
-                    return []
-            except (FileNotFoundError, json.JSONDecodeError):
-                return []
-        def edit(products_):
-            for _ in products_:
-                if _ == product:
-                    products_[product] -= quantity
-                    return products_
-            return False
-        def save(products_):
-            with open('products.json', 'w', encoding='utf-8') as file:
-                json.dump(products_, file, ensure_ascii=False, indent=4)
-        products = edit(load())
-        if products:
-            save(products)
-            return True
-        else:
-            return False
+    @classmethod
+    def load_products_from_json(cls, file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                products = json.load(file)
+            return products
+        except FileNotFoundError:
+            print(f"Ошибка: Файл '{file_path}' не найден.")
+        except json.JSONDecodeError:
+            print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
+        except Exception as e:
+            print(f"Неожиданная ошибка: {e}")
+        return None
 
-    def check_availability(self, number_product):
-        if number_product == 1:
-            pizza = Pepperoni()
-            ingredients = pizza.ingredients
-            for _ in ingredients:
-                if self.subtract_products(_, ingredients[_]) == False:
-                    return False
-        elif number_product == 2:
-            pizza = Margarita()
-            ingredients = pizza.ingredients
-            for _ in ingredients:
-                if self.subtract_products(_, ingredients[_]) == False:
-                    return False
-        elif number_product == 3:
-            pizza = FourCheeses()
-            ingredients = pizza.ingredients
-            for _ in ingredients:
-                if self.subtract_products(_, ingredients[_]) == False:
-                    return False
-        elif number_product == 4:
-            pizza = HamCheese()
-            ingredients = pizza.ingredients
-            for _ in ingredients:
-                if self.subtract_products(_, ingredients[_]) == False:
-                    return False
-        elif number_product == 5:
-            pizza = Hawaiian()
-            ingredients = pizza.ingredients
-            for _ in ingredients:
-                if self.subtract_products(_, ingredients[_]) == False:
-                    return False
-        return True
+    @classmethod
+    def subtraction_from_warehouse(cls, pizza_num: int):
+        nums = {
+            1: Pepperoni(),
+            2: Margarita(),
+            3: FourCheeses(),
+            4: HamCheese(),
+            5: Hawaiian()
+        }
+        pizza = nums[pizza_num]
+        data = cls.load_products_from_json("warehouse.json")
+        for product_name in pizza.ingredients.keys():
+            data[product_name] -= pizza.ingredients[product_name]
+        cls.save_pizzas_to_json(data, "warehouse.json")
+
+    @classmethod
+    def save_pizzas_to_json(cls, products_dict, file_path, indent=4):
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                json.dump(products_dict, file, ensure_ascii=False, indent=indent)
+            print(f"Данные успешно сохранены в {file_path}")
+            return True
+        except Exception as e:
+            print(f"Ошибка при сохранении файла: {e}")
+            return False
