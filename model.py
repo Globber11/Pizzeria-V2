@@ -112,15 +112,17 @@ class Hawaiian(Pizza):
         )
 
 class Busket:
-    def __init__(self, busket: Dict[str, int]):
+    def __init__(self, busket: Dict[str, list[int, int]]):
         self.__busket = busket
 
-    def add_to_busket(self, product, quantity):
-        if product in self.__busket.keys():
-            self.__busket[product] += quantity
+    def add_to_busket(self, product: Union[Hawaiian, HamCheese, FourCheeses, Pepperoni, Margarita], quantity):
+        name = product.name
+        price = product.price
+        if name in self.__busket.keys():
+            self.__busket[name][1] += quantity # self.__busket[product][0] = price, self.__busket[product][1] = quantity
         else:
-            self.__busket[product] = quantity
-            
-    @property
-    def busket(self):
+            self.__busket[name].append(price)
+            self.__busket[name].append(quantity)
+
+    def get_busket(self):
         return self.__busket
