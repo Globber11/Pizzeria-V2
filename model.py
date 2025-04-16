@@ -2,7 +2,7 @@ from random import *
 import json
 
 class Registrator:
-    def crate_new_account(self, name, surname, phone_number, born_date):
+    def crate_account(self, name, surname, phone_number, born_date):
         def load_users():
             try:
                 with open('acoounts.json', 'r', encoding='utf-8') as file:
