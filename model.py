@@ -2,12 +2,14 @@ from random import *
 import json
 from typing import Dict
 from abc import ABC, abstractmethod
+from typing import Union
 
 class Registrator:
-    def crate_account(self, name, surname, phone_number, born_date):
+    @classmethod
+    def crate_account(cls, name, surname, phone_number, born_date):
         def load_users():
             try:
-                with open('acoounts.json', 'r', encoding='utf-8') as file:
+                with open('accounts.json', 'r', encoding='utf-8') as file:
                     content = file.read()
                     if content.strip():
                         return json.loads(content)
@@ -16,7 +18,7 @@ class Registrator:
                 return []
 
         def save_users(users_):
-            with open('acoounts.json', 'w', encoding='utf-8') as file:
+            with open('accounts.json', 'w', encoding='utf-8') as file:
                 json.dump(users_, file, ensure_ascii=False, indent=4)
 
         users = load_users()
@@ -126,6 +128,3 @@ class Busket:
 
     def get_busket(self):
         return self.__busket
-            print(f'{_} {self.__busket[_][1]}шт.')
-        print(f'Total to pay: {sum(self.__busket[_][0] * self.__busket[_][1] for _ in self.__busket)}')
-        print("=" * 30)
