@@ -111,16 +111,16 @@ class Hawaiian(Pizza):
             base_price=550
         )
 
-class Basket:
-    def __init__(self, basket: Dict[str, int]):
-        self.__basket = basket
+class Busket:
+    def __init__(self, busket: Dict[str, int]):
+        self.__busket = busket
 
-    def add_to_basket(self, product, quantity):
-        if product in self.__basket.keys():
-            self.__basket[product] += quantity
+    def add_to_busket(self, product, quantity):
+        if product in self.__busket.keys():
+            self.__busket[product] += quantity
         else:
-            self.__basket[product] = quantity
+            self.__busket[product] = quantity
             
     @property
-    def basket(self):
-        return self.__basket
+    def busket(self):
+        return self.__busket
