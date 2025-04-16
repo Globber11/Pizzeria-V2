@@ -1,0 +1,32 @@
+{
+  "margarita": {
+    "cheese": 100,
+    "tomatoes": 200,
+    "sauce": 50,
+    "dough": 300
+  },
+  "fourcheeses": {
+    "cheese": 300,
+    "sauce": 50,
+    "dough": 300
+  },
+  "pepperoni": {
+    "cheese": 150,
+    "sauce": 50,
+    "sausage": 70,
+    "dough": 300
+  },
+  "hamcheese": {
+    "cheese": 150,
+    "ham": 70,
+    "sauce": 50,
+    "dough": 300
+  },
+  "hawaiian": {
+    "chicken": 100,
+    "pineapple": 70,
+    "cheese": 100,
+    "sauce": 50,
+    "dough": 250
+  }
+}
