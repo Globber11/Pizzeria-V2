@@ -1,6 +1,7 @@
 import re
 from model import Registrator
 from view import OrderView
+import json
 
 class DataChecker:
     @classmethod
@@ -30,6 +31,20 @@ class Order:
     @classmethod
     def start(cls):
         RegistrationController.crate_account()
-        OrderView.product_selection(["Pepperoni", "Margarita", "Four Cheeses", "Ham and Cheese", "Hawaiian"])
+        OrderView.product_selection(cls.load_pizzas_from_json("products.json"))
+
+    @classmethod
+    def load_pizzas_from_json(cls, file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                pizzas = json.load(file)
+            return pizzas
+        except FileNotFoundError:
+            print(f"Ошибка: Файл '{file_path}' не найден.")
+        except json.JSONDecodeError:
+            print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
+        except Exception as e:
+            print(f"Неожиданная ошибка: {e}")
+        return None
 
 Order.start()
