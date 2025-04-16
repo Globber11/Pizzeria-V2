@@ -3,14 +3,24 @@ import json
 
 class Registrator:
     def crate_new_account(self, name, surname, phone_number, born_date):
+        def load_users():
+            try:
+                with open('acoounts.json', 'r', encoding='utf-8') as file:
+                    content = file.read()
+                    if content.strip():
+                        return json.loads(content)
+                    return []
+            except (FileNotFoundError, json.JSONDecodeError):
+                return []
+
+        def save_users(users_):
+            with open('acoounts.json', 'w', encoding='utf-8') as file:
+                json.dump(users_, file, ensure_ascii=False, indent=4)
+
+        users = load_users()
+
         seed(name + surname + str(phone_number) + str(born_date))
         ID = int(random() * 10 ** 15)
-        with open('acoounts.json', 'r', encoding='utf-8') as file:
-            content = file.read()
-            if content.strip():
-                users = json.loads(content)
-            else:
-                users = []
         for user in users:
             if user['ID'] == ID:
                 return f'Авторизация завершена'
@@ -21,11 +31,9 @@ class Registrator:
             'phone_number': phone_number,
             'born_year': born_date
         }
-
         users.append(account_data)
-        with open('acoounts.json', 'w', encoding='utf-8') as file:
-            json.dump(users, file, ensure_ascii=False, indent=4)
-        return f'Регистрация завершена'
+
+        save_users(users)
 
 class Pizza:
     def __init__(self, price: int, ingredients: dict[str, int], name: str):
