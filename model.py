@@ -1,5 +1,5 @@
 class Pizza:
-    def __init__(self, price: int, ingredients: dict[str, int], name: strпппп):
+    def __init__(self, price: int, ingredients: dict[str, int], name: str):
         self.__name = name
         self.__ingredients = ingredients
         self.__price = price
@@ -10,7 +10,8 @@ class Pizza:
 
     @get_price.setter
     def set_price(self):
-        return self.__price
+        self.__price = price
+        return self
 
 class Margarita(Pizza):
     pass
