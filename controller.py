@@ -43,59 +43,56 @@ class Logger:
             if log_num == '':
                 with open('logs/log_counter.txt', 'w') as f:
                     f.write("0")
-        with open(f'logs/log {log_num}.txt', 'x'):
+        with open(f'logs/log {log_num}', 'x'):
             pass
         with open('logs/log_counter.txt', 'w') as f:
             f.write(str(int(log_num) + 1))
-        return f'logs/log {log_num}.txt'
+        return f'logs/log {log_num}'
 
     def create_log(self, log_file, log):
         with open(log_file, 'a') as f:
             f.write(log)
 
 
-class Programm:
-    log_file = 0
+class UserInterface:
+    @staticmethod
+    def load_pizzas_from_json(file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                pizzas = json.load(file)
+            return pizzas
+        except FileNotFoundError:
+            print(f"Ошибка: Файл '{file_path}' не найден.")
+        except json.JSONDecodeError:
+            print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
+        except Exception as e:
+            print(f"Неожиданная ошибка: {e}")
+        return None
 
     @classmethod
-    def start(cls):
-        log_file = Logger.create_log_file()
-        if RegistrationController.crate_account() == 'Is admin':
-            cls.admin_interface()
-        else:
-            cls.user_interface()
-
-    @classmethod
-    def user_interface(cls):
-        def load_pizzas_from_json(file_path):
-            try:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    pizzas = json.load(file)
-                return pizzas
-            except FileNotFoundError:
-                print(f"Ошибка: Файл '{file_path}' не найден.")
-            except json.JSONDecodeError:
-                print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
-            except Exception as e:
-                print(f"Неожиданная ошибка: {e}")
-            return None
-
-        products = load_pizzas_from_json("products.json")
+    def run(cls):
+        products = cls.load_pizzas_from_json("products.json")
         order_stop = False
         busket = Busket({})
+
         while True:
             OrderView.product_selection(products)
             while True:
-                product_num = int(input("Введите цифру соответствующую вашему выбору: "))
-                if product_num == 0:
-                    order_stop = True
+                try:
+                    product_num = int(input("Введите цифру соответствующую вашему выбору: "))
+                    if product_num == 0:
+                        order_stop = True
+                        break
+                    elif str(product_num) not in products.keys():
+                        print("Uncorrect num")
+                        continue
                     break
-                elif str(product_num) not in products.keys():
-                    print("Uncorrect num")
-                    continue
+                except ValueError:
+                    print("Пожалуйста, введите число")
+
+            if order_stop:
                 break
-            if order_stop == True:
-                break
+
             while True:
                 try:
                     product_quantity = int(input("Введите количество (макс 10): "))
@@ -105,6 +102,7 @@ class Programm:
                     print("Uncorrect num")
                     continue
                 break
+
             if Warehouse.availability_check(product_num, product_quantity):
                 Warehouse.subtraction_from_warehouse(product_num, product_quantity)
                 busket.add_to_busket(product_num, product_quantity)
@@ -112,11 +110,13 @@ class Programm:
                 print(
                     "Продуктов для вашей пиццы не хватает на складе, попробуйте сделать другой заказ, либо измените количество")
                 continue
+
         CheckGenerator.print_check(busket.get_busket())
 
 
+class AdminInterface:
     @classmethod
-    def admin_interface(cls):
+    def run(cls):
         AdminView.admin_action_selection()
         action_num = int(input('Выберите номер действия: '))
         if action_num == 1:
@@ -124,12 +124,24 @@ class Programm:
         elif action_num == 2:
             pass  # Логи ожидают настойки
         elif action_num == 3:
-            for _ in range(1,6):
+            for _ in range(1, 6):
                 print(f'{Warehouse.num_to_pizza(_).name} - {Warehouse.num_to_pizza(_).price}')
         elif action_num == 4:
             with open('warehouse.json', 'r', encoding='utf-8') as file:
                 products = file.read()
             print(products)
+
+
+class Programm:
+    log_file = 0
+
+    @classmethod
+    def start(cls):
+        log_file = Logger.create_log_file()
+        if RegistrationController.crate_account() == 'Is admin':
+            AdminInterface.run()
+        else:
+            UserInterface.run()
 
 
 Programm.start()
