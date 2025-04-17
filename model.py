@@ -176,7 +176,7 @@ class Warehouse:
         return True
 
     @classmethod
-    def num_to_pizza(cls, pizza_num: int):
+    def num_to_pizza(cls, pizza_num: int) -> Union[Pepperoni, Margarita, FourCheeses, HamCheese, Hawaiian]:
         nums = {
             1: Pepperoni(),
             2: Margarita(),
