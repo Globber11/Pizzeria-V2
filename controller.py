@@ -1,7 +1,8 @@
 import re
-from model import Registrator
-from view import OrderView
+from model import Registrator, Warehouse
+from view import OrderView, CheckGenerator
 import json
+from model import Busket
 
 class DataChecker:
     @classmethod
@@ -53,23 +54,51 @@ class Programm:
 
     @classmethod
     def user_interface(cls):
-        products = cls.load_pizzas_from_json("products.json")
-        OrderView.product_selection(products)
+        products = load_pizzas_from_json("products.json")
+        order_stop = False
+        busket = Busket({})
         while True:
-            product_num = input("Введите цифру соответствующую вашему выбору: ")
-            if product_num not in products.keys():
-                print("Uncorrect num")
+            OrderView.product_selection(products)
+            while True:
+                product_num = int(input("Введите цифру соответствующую вашему выбору: "))
+                if product_num == 0:
+                    order_stop = True
+                    break
+                elif str(product_num) not in products.keys():
+                    print("Uncorrect num")
+                    continue
+                break
+            if order_stop == True:
+                break
+            while True:
+                try:
+                    product_quantity = int(input("Введите количество (макс 10): "))
+                    if product_quantity > 10 or product_quantity < 0:
+                        raise ValueError
+                except ValueError:
+                    print("Uncorrect num")
+                    continue
+                break
+            if Warehouse.availability_check(product_num, product_quantity):
+                Warehouse.subtraction_from_warehouse(product_num, product_quantity)
+                busket.add_to_busket(product_num, product_quantity)
+            else:
+                print("Продуктов для вашей пиццы не хватает на складе, попробуйте сделать другой заказ, либо измените количество")
                 continue
-            break
-        while True:
+        CheckGenerator.print_check(busket.get_busket())\
+        
+        def load_pizzas_from_json(cls, file_path):
             try:
-                product_quantity = int(input("Введите количество (макс 10): "))
-                if 0 < product_quantity <= 10:
-                    raise ValueError
-            except ValueError:
-                print("Uncorrect num")
-                continue
-            break
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    pizzas = json.load(file)
+                return pizzas
+            except FileNotFoundError:
+                print(f"Ошибка: Файл '{file_path}' не найден.")
+            except json.JSONDecodeError:
+                print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
+            except Exception as e:
+                print(f"Неожиданная ошибка: {e}")
+            return None
 
     @classmethod
     def admin_interface(cls):
