@@ -117,17 +117,17 @@ class Hawaiian(Pizza):
         )
 
 class Busket:
-    def __init__(self, busket: Dict[str, list[int, int]]):
+    def __init__(self, busket: Dict[str, list[int]]):
         self.__busket = busket
 
-    def add_to_busket(self, product: Union[Hawaiian, HamCheese, FourCheeses, Pepperoni, Margarita], quantity):
+    def add_to_busket(self, pizza_num, quantity: int):
+        product = Warehouse.num_to_pizza(pizza_num)
         name = product.name
         price = product.price
         if name in self.__busket.keys():
             self.__busket[name][1] += quantity # self.__busket[product][0] = price, self.__busket[product][1] = quantity
         else:
-            self.__busket[name].append(price)
-            self.__busket[name].append(quantity)
+            self.__busket[name] = [price, quantity]
 
     def get_busket(self):
         return self.__busket
@@ -148,19 +148,12 @@ class Warehouse:
         return None
 
     @classmethod
-    def subtraction_from_warehouse(cls, pizza_num: int):
-        nums = {
-            1: Pepperoni(),
-            2: Margarita(),
-            3: FourCheeses(),
-            4: HamCheese(),
-            5: Hawaiian()
-        }
-        pizza = nums[pizza_num]
-        data = cls.load_products_from_json("warehouse.json")
+    def subtraction_from_warehouse(cls, pizza_num: int, quantity: int):
+        pizza = cls.num_to_pizza(pizza_num)
+        warehouse = cls.load_products_from_json("warehouse.json")
         for product_name in pizza.ingredients.keys():
-            data[product_name] -= pizza.ingredients[product_name]
-        cls.save_pizzas_to_json(data, "warehouse.json")
+            warehouse[product_name] -= pizza.ingredients[product_name] * quantity
+        cls.save_pizzas_to_json(warehouse, "warehouse.json")
 
     @classmethod
     def save_pizzas_to_json(cls, products_dict, file_path, indent=4):
@@ -172,3 +165,23 @@ class Warehouse:
         except Exception as e:
             print(f"Ошибка при сохранении файла: {e}")
             return False
+
+    @classmethod
+    def availability_check(cls, pizza_num: int, quantity: int):
+        pizza = cls.num_to_pizza(pizza_num)
+        warehouse = cls.load_products_from_json("warehouse.json")
+        for _ in pizza.ingredients.keys():
+            if pizza.ingredients[_] * quantity > warehouse[_]:
+                return False
+        return True
+
+    @classmethod
+    def num_to_pizza(cls, pizza_num: int):
+        nums = {
+            1: Pepperoni(),
+            2: Margarita(),
+            3: FourCheeses(),
+            4: HamCheese(),
+            5: Hawaiian()
+        }
+        return nums[pizza_num]
