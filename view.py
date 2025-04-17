@@ -6,6 +6,7 @@ class OrderView:
         print("Выберите продукт:")
         for _ in range(1,len(product_names)+1):
             print(f"\t{_}. {product_names[str(_)]}")
+        print("\t0. Exit order")
 
 class AdminView:
     @classmethod
