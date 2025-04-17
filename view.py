@@ -17,6 +17,7 @@ class AdminView:
 class CheckGenerator:
     @classmethod
     def print_check(cls, busket: dict[str, list[int]]):
+        print("=" * 30)
         for _ in busket:
             print(f'{_} {busket[_][0]}rub x {busket[_][1]}шт.')
         print(f'Total to pay: {sum(busket[_][0] * busket[_][1] for _ in busket)}')
