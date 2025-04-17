@@ -27,9 +27,25 @@ class RegistrationController:
                 print('Дата введена неверно, попробуйте снова')
         Registrator.crate_account(name, surname, phone_number, born_date)
 
+class Logger:
+    @classmethod
+    def create_log_file(cls):
+        with open('logs/log_counter.txt', 'r') as f:
+            log_num = f.read()
+        with open(f'logs/log {log_num}', 'x'):
+            pass
+        with open('logs/log_counter.txt', 'w') as f:
+            f.write(str(int(log_num) + 1))
+        return f'logs/log {log_num}'
+    def create_log(self, log_file, log):
+        with open(log_file, 'a') as f:
+            f.write(log)
+
 class Programm:
+    log_file = 0
     @classmethod
     def start(cls):
+        log_file = Logger.create_log_file()
         if RegistrationController.crate_account() == 'Is admin':
             cls.admin_interface()
         else:
