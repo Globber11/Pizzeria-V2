@@ -37,7 +37,23 @@ class StartProgramm:
 
     @classmethod
     def user_interface(cls):
-        OrderView.product_selection(cls.load_pizzas_from_json("products.json"))
+        products = cls.load_pizzas_from_json("products.json")
+        OrderView.product_selection(products)
+        while True:
+            product_num = input("Введите цифру соответствующую вашему выбору: ")
+            if product_num not in products.keys():
+                print("Uncorrect num")
+                continue
+            break
+        while True:
+            try:
+                product_quantity = int(input("Введите количество (макс 10): "))
+                if 0 < product_quantity <= 10:
+                    raise ValueError
+            except ValueError:
+                print("Uncorrect num")
+                continue
+            break
 
     @classmethod
     def admin_interface(cls):
