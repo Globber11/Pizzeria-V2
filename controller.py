@@ -27,7 +27,7 @@ class RegistrationController:
                 print('Дата введена неверно, попробуйте снова')
         Registrator.crate_account(name, surname, phone_number, born_date)
 
-class StartProgramm:
+class Programm:
     @classmethod
     def start(cls):
         if RegistrationController.crate_account() == 'Is admin':
@@ -78,4 +78,4 @@ class StartProgramm:
                 poducts = file.read()
             print(poducts)
 
-StartProgramm.start()
+Programm.start()
