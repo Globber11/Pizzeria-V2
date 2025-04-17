@@ -7,6 +7,11 @@ class OrderView:
         for _ in range(1,len(product_names)+1):
             print(f"\t{_}. {product_names[str(_)]}")
 
+class AdminView:
+    @classmethod
+    def admin_action_selection(cls):
+        print('Добро пожаловать в систему администратор, выберите действие:')
+        print('Доступные функции:    \n 1 - вывод логов    \n 2 - чистка логов    \n 3 - вывод данных пользователей    \n 4 - просмотр кол-ва продуктов на складе')
 
 class CheckGenerator:
     def __init__(self, busket: dict[str, list[int, int]]):
