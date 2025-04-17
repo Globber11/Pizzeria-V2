@@ -4,6 +4,7 @@ from typing import Dict
 from abc import ABC, abstractmethod
 from typing import Union
 
+
 class Registrator:
     @classmethod
     def crate_account(cls, name, surname, phone_number, born_date):
@@ -68,13 +69,6 @@ class Pizza(ABC):
     def __str__(self):
         return f"{self._name} (Цена: {self._base_price}, Ингредиенты: {self._ingredients})"
 
-class CustomPizza(Pizza):
-    def __init__(self, name: str, ingredients: Dict[str, int], base_price: int):
-        super().__init__(
-            name=name,
-            ingredients=ingredients,
-            base_price=base_price
-        )
 
 class Margarita(Pizza):
     def __init__(self):
@@ -84,6 +78,7 @@ class Margarita(Pizza):
             base_price=450
         )
 
+
 class Pepperoni(Pizza):
     def __init__(self):
         super().__init__(
@@ -91,6 +86,7 @@ class Pepperoni(Pizza):
             ingredients={"cheese": 150, "sauce": 50, "sausage": 70, "dough": 300},
             base_price=550
         )
+
 
 class FourCheeses(Pizza):
     def __init__(self):
@@ -100,6 +96,7 @@ class FourCheeses(Pizza):
             base_price=600
         )
 
+
 class HamCheese(Pizza):
     def __init__(self):
         super().__init__(
@@ -107,6 +104,7 @@ class HamCheese(Pizza):
             ingredients={"cheese": 150, "ham": 70, "sauce": 50, "dough": 300},
             base_price=500
         )
+
 
 class Hawaiian(Pizza):
     def __init__(self):
