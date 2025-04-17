@@ -114,6 +114,14 @@ class Hawaiian(Pizza):
             base_price=550
         )
 
+class CustomPizza(Pizza):
+    def __init__(self, name: str, ingredients: Dict[str, int], base_price: int):
+        super().__init__(
+            name=name,
+            ingredients=ingredients,
+            base_price=base_price
+        )
+
 class Busket:
     def __init__(self, busket: Dict[str, list[int]]):
         self.__busket = busket
