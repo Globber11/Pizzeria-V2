@@ -27,24 +27,39 @@ class RegistrationController:
                 print('Дата введена неверно, попробуйте снова')
         Registrator.crate_account(name, surname, phone_number, born_date)
 
-class Order:
+class StartProgramm:
     @classmethod
     def start(cls):
-        RegistrationController.crate_account()
+        if RegistrationController.crate_account() == 'Is admin':
+            cls.admin_interface()
+        else:
+            cls.user_interface()
+
+    @classmethod
+    def user_interface(cls):
         OrderView.product_selection(cls.load_pizzas_from_json("products.json"))
 
     @classmethod
-    def load_pizzas_from_json(cls, file_path):
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                pizzas = json.load(file)
-            return pizzas
-        except FileNotFoundError:
-            print(f"Ошибка: Файл '{file_path}' не найден.")
-        except json.JSONDecodeError:
-            print(f"Ошибка: Файл '{file_path}' содержит некорректный JSON.")
-        except Exception as e:
-            print(f"Неожиданная ошибка: {e}")
-        return None
+    def admin_interface(cls):
+        AdminView.admin_action_selection()
+        action_num = int(input('Выберите номер действия: '))
+        if action_num == 1:
+            pass # Логи ожидают настойки
+        elif action_num == 2:
+            pass # Логи ожидают настойки
+        elif action_num == 3:
+            nums = {
+                'Pepperoni': Pepperoni(),
+                'Margarita': Margarita(),
+                'FourCheeses': FourCheeses(),
+                'HamCheese': HamCheese(),
+                'Hawaiian': Hawaiian()
+            }
+            for _ in nums:
+                print(f'{_} - {nums[_].price}')
+        elif action_num == 4:
+            with open('warehouse.json', 'r', encoding='utf-8') as file:
+                poducts = file.read()
+            print(poducts)
 
-Order.start()
+StartProgramm.start()
