@@ -68,6 +68,14 @@ class Pizza(ABC):
     def __str__(self):
         return f"{self._name} (Цена: {self._base_price}, Ингредиенты: {self._ingredients})"
 
+class CustomPizza(Pizza):
+    def __init__(self, name: str, ingredients: Dict[str, int], base_price: int):
+        super().__init__(
+            name=name,
+            ingredients=ingredients,
+            base_price=base_price
+        )
+
 class Margarita(Pizza):
     def __init__(self):
         super().__init__(
