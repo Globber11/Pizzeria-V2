@@ -43,14 +43,16 @@ class Logger:
             if log_num == '':
                 with open('logs/log_counter.txt', 'w') as f:
                     f.write("0")
-        with open(f'logs/log {log_num}', 'x'):
+        with open(f'logs/log {log_num}.txt', 'x'):
             pass
         with open('logs/log_counter.txt', 'w') as f:
             f.write(str(int(log_num) + 1))
-        return f'logs/log {log_num}'
+        return f'logs/log {log_num}.txt'
 
-    def create_log(self, log_file, log):
-        with open(log_file, 'a') as f:
+    def create_log(cls, log):
+        with open('logs/log_counter.txt', 'r') as f:
+            log_num = f.read()
+        with open(f'logs/log {log_num}.txt', 'a') as f:
             f.write(log)
 
 
