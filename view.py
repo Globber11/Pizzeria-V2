@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 class OrderView:
     @classmethod
@@ -7,6 +7,13 @@ class OrderView:
         for _ in range(1,len(product_names)+1):
             print(f"\t{_}. {product_names[str(_)]}")
         print("\t0. Exit order")
+
+    @classmethod
+    def ingredient_selection(cls, ingredient_names: Dict):
+        print("Выберите ингредиент:")
+        for _ in range(1, len(ingredient_names) + 1):
+            print(f"\t{_}. {ingredient_names[str(_)]}")
+        print('\t0. Закончить создание пиццы')
 
 class AdminView:
     @classmethod
