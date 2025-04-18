@@ -2,7 +2,7 @@ import re
 from model import Registrator, Warehouse
 from view import OrderView, CheckGenerator, AdminView
 import json
-from model import Busket
+from model import Busket, CustomPizzaBuilder, CustomPizza
 
 
 class DataChecker:
@@ -56,7 +56,7 @@ class Logger:
 
 class UserInterface:
     @staticmethod
-    def load_pizzas_from_json(file_path):
+    def load_from_json(file_path):
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
                 pizzas = json.load(file)
@@ -71,7 +71,7 @@ class UserInterface:
 
     @classmethod
     def run(cls):
-        products = cls.load_pizzas_from_json("products.json")
+        products = cls.load_from_json("products.json")
         order_stop = False
         busket = Busket({})
 
@@ -82,6 +82,8 @@ class UserInterface:
                     product_num = int(input("Введите цифру соответствующую вашему выбору: "))
                     if product_num == 0:
                         order_stop = True
+                        break
+                    if product_num == 6:
                         break
                     elif str(product_num) not in products.keys():
                         print("Uncorrect num")
@@ -102,16 +104,57 @@ class UserInterface:
                     print("Uncorrect num")
                     continue
                 break
-
-            if Warehouse.availability_check(product_num, product_quantity):
-                Warehouse.subtraction_from_warehouse(product_num, product_quantity)
-                busket.add_to_busket(product_num, product_quantity)
+            if product_num == 6:
+                pizza_obj = cls.create_custom_pizza()
             else:
-                print(
-                    "Продуктов для вашей пиццы не хватает на складе, попробуйте сделать другой заказ, либо измените количество")
+                pizza_obj = Warehouse.num_to_pizza(product_num)
+            if Warehouse.availability_check(pizza_obj, product_quantity):
+                Warehouse.subtraction_from_warehouse(pizza_obj, product_quantity)
+                busket.add_to_busket(pizza_obj, product_quantity)
+            else:
+                print("Продуктов для вашей пиццы не хватает на складе, попробуйте сделать другой заказ, либо измените количество")
                 continue
 
         CheckGenerator.print_check(busket.get_busket())
+
+    @classmethod
+    def create_custom_pizza(cls) -> CustomPizza:
+        order_stop = False
+        custom_pizza = CustomPizzaBuilder()
+        ingredients_name = cls.load_from_json("ingredients_name.json")
+        while True:
+            OrderView.ingredient_selection(ingredients_name)
+            while True:
+                try:
+                    product_num = int(input("Введите цифру соответствующую вашему выбору: "))
+                    if product_num == 0:
+                        order_stop = True
+                        break
+                    elif product_num > len(ingredients_name)+1:
+                        print("Uncorrect num")
+                        continue
+                    break
+                except ValueError:
+                    print("Пожалуйста, введите число")
+
+            if order_stop:
+                break
+
+            while True:
+                try:
+                    product_quantity = int(input("Введите количество (макс 20): "))
+                    if product_quantity > 20 or product_quantity <= 0:
+                        raise ValueError
+                except ValueError:
+                    print("Uncorrect num")
+                    continue
+                break
+            custom_pizza.add_ingredients(ingredients_name[str(product_num)], product_quantity)
+        return custom_pizza.build()
+
+
+
+
 
 
 class AdminInterface:
@@ -132,7 +175,7 @@ class AdminInterface:
             print(products)
 
 
-class Programm:
+class Program:
     log_file = 0
 
     @classmethod
@@ -144,4 +187,4 @@ class Programm:
             UserInterface.run()
 
 
-Programm.start()
+Program.start()
