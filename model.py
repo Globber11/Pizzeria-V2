@@ -1,3 +1,4 @@
+from pydoc import classify_class_attrs
 from random import *
 import json
 from typing import Dict
@@ -69,7 +70,6 @@ class Pizza(ABC):
     def __str__(self):
         return f"{self._name} (Цена: {self._base_price}, Ингредиенты: {self._ingredients})"
 
-
 class Margarita(Pizza):
     def __init__(self):
         super().__init__(
@@ -115,19 +115,42 @@ class Hawaiian(Pizza):
         )
 
 class CustomPizza(Pizza):
-    def __init__(self, name: str, ingredients: Dict[str, int], base_price: int):
+    def __init__(self, ingredients, base_price):
         super().__init__(
-            name=name,
+            name='Custom Pizza',
             ingredients=ingredients,
             base_price=base_price
         )
+
+class CustomPizzaBuilder:
+    def __init__(self):
+        self.ingredients = {
+            "dough": 300
+        }
+        self.total_price = 0
+
+    @staticmethod
+    def ingredients_price_loader():
+        with open("ingredients_price.json", "r") as f:
+            return json.load(f)
+
+    def add_ingredients(self, ingredient, quantity):
+        if ingredient in self.ingredients.keys():
+            self.ingredients[ingredient] =+ quantity
+        else: self.ingredients[ingredient] = quantity
+        self.total_price += quantity * self.ingredients_price_loader()[ingredient]
+
+    def build(self):
+        return CustomPizza(
+            ingredients=self.ingredients,
+            base_price=self.total_price
+            )
 
 class Busket:
     def __init__(self, busket: Dict[str, list[int]]):
         self.__busket = busket
 
-    def add_to_busket(self, pizza_num, quantity: int):
-        product = Warehouse.num_to_pizza(pizza_num)
+    def add_to_busket(self, product, quantity: int):
         name = product.name
         price = product.price
         if name in self.__busket.keys():
@@ -154,8 +177,7 @@ class Warehouse:
         return None
 
     @classmethod
-    def subtraction_from_warehouse(cls, pizza_num: int, quantity: int):
-        pizza = cls.num_to_pizza(pizza_num)
+    def subtraction_from_warehouse(cls, pizza, quantity: int):
         warehouse = cls.load_products_from_json("warehouse.json")
         for product_name in pizza.ingredients.keys():
             warehouse[product_name] -= pizza.ingredients[product_name] * quantity
@@ -173,8 +195,7 @@ class Warehouse:
             return False
 
     @classmethod
-    def availability_check(cls, pizza_num: int, quantity: int):
-        pizza = cls.num_to_pizza(pizza_num)
+    def availability_check(cls, pizza, quantity: int):
         warehouse = cls.load_products_from_json("warehouse.json")
         for _ in pizza.ingredients.keys():
             if pizza.ingredients[_] * quantity > warehouse[_]:
