@@ -185,6 +185,3 @@ class Program:
             AdminInterface.run()
         else:
             UserInterface.run()
-
-
-Program.start()
